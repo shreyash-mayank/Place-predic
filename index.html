@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Placement Predictor</title>
+    <!-- Modern web fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-image: 
+                radial-gradient(circle at top left, rgba(99, 102, 241, 0.15), transparent 40%),
+                radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.1), transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            background: var(--surface);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes formAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        input::placeholder {
+            color: rgba(148, 163, 184, 0.5);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .result-error {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Placement Predictor</h1>
+            <p class="subtitle">Enter student metrics to intelligently predict placement outcome.</p>
+        </div>
+        
+        <form action="/predict" method="POST">
+            <div class="form-group">
+                <label for="IQ">IQ Level</label>
+                <input type="number" name="IQ" id="IQ" placeholder="e.g. 110" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="CGPA">CGPA (Out of 10)</label>
+                <input type="number" step="0.01" name="CGPA" id="CGPA" placeholder="e.g. 8.5" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="10th_Marks">10th Grade Marks (%)</label>
+                <input type="number" step="0.01" name="10th_Marks" id="10th_Marks" placeholder="e.g. 85" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="12th_Marks">12th Grade Marks (%)</label>
+                <input type="number" step="0.01" name="12th_Marks" id="12th_Marks" placeholder="e.g. 88" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="Communication_Skills">Communication Skills (Out of 10)</label>
+                <input type="number" step="0.01" name="Communication_Skills" id="Communication_Skills" placeholder="e.g. 8.0" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">Predict Outcome</button>
+        </form>
+
+        {% if prediction_text %}
+            <div class="result-box result-success">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                {{ prediction_text }}
+            </div>
+        {% endif %}
+        
+        {% if error_text %}
+            <div class="result-box result-error">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                {{ error_text }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
